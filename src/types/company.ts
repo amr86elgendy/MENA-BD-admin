@@ -20,6 +20,13 @@ export type TCompany = {
   website: string | null
   description: string | null
   services: string[]
+  reports?: Array<{
+    id: number
+    name: string
+    description: string
+    price: number
+    turnaround: string
+  }>
   createdAt: string
   updatedAt: string
 }

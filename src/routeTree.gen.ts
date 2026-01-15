@@ -11,12 +11,15 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
+import { Route as AuthReportsIndexRouteImport } from './routes/_auth/reports/index'
 import { Route as AuthCustomersIndexRouteImport } from './routes/_auth/customers/index'
 import { Route as AuthCountriesIndexRouteImport } from './routes/_auth/countries/index'
 import { Route as AuthCompaniesIndexRouteImport } from './routes/_auth/companies/index'
 import { Route as AuthDashboardIndexRouteImport } from './routes/_auth/_dashboard/index'
+import { Route as AuthReportsCreateRouteImport } from './routes/_auth/reports/create'
 import { Route as AuthCountriesCreateRouteImport } from './routes/_auth/countries/create'
 import { Route as AuthCompaniesCreateRouteImport } from './routes/_auth/companies/create'
+import { Route as AuthReportsEditReportIdRouteImport } from './routes/_auth/reports/edit.$reportId'
 import { Route as AuthCustomersEditCustomerIdRouteImport } from './routes/_auth/customers/edit.$customerId'
 import { Route as AuthCustomersDetailsCustomerIdRouteImport } from './routes/_auth/customers/details.$customerId'
 import { Route as AuthCountriesEditCountryIdRouteImport } from './routes/_auth/countries/edit.$countryId'
@@ -30,6 +33,11 @@ const LoginIndexRoute = LoginIndexRouteImport.update({
   id: '/login/',
   path: '/login/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthReportsIndexRoute = AuthReportsIndexRouteImport.update({
+  id: '/reports/',
+  path: '/reports/',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 const AuthCustomersIndexRoute = AuthCustomersIndexRouteImport.update({
   id: '/customers/',
@@ -51,6 +59,11 @@ const AuthDashboardIndexRoute = AuthDashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AuthReportsCreateRoute = AuthReportsCreateRouteImport.update({
+  id: '/reports/create',
+  path: '/reports/create',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
 const AuthCountriesCreateRoute = AuthCountriesCreateRouteImport.update({
   id: '/countries/create',
   path: '/countries/create',
@@ -59,6 +72,11 @@ const AuthCountriesCreateRoute = AuthCountriesCreateRouteImport.update({
 const AuthCompaniesCreateRoute = AuthCompaniesCreateRouteImport.update({
   id: '/companies/create',
   path: '/companies/create',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthReportsEditReportIdRoute = AuthReportsEditReportIdRouteImport.update({
+  id: '/reports/edit/$reportId',
+  path: '/reports/edit/$reportId',
   getParentRoute: () => AuthRouteRoute,
 } as any)
 const AuthCustomersEditCustomerIdRoute =
@@ -90,27 +108,33 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginIndexRoute
   '/companies/create': typeof AuthCompaniesCreateRoute
   '/countries/create': typeof AuthCountriesCreateRoute
+  '/reports/create': typeof AuthReportsCreateRoute
   '/': typeof AuthDashboardIndexRoute
   '/companies': typeof AuthCompaniesIndexRoute
   '/countries': typeof AuthCountriesIndexRoute
   '/customers': typeof AuthCustomersIndexRoute
+  '/reports': typeof AuthReportsIndexRoute
   '/companies/edit/$companyId': typeof AuthCompaniesEditCompanyIdRoute
   '/countries/edit/$countryId': typeof AuthCountriesEditCountryIdRoute
   '/customers/details/$customerId': typeof AuthCustomersDetailsCustomerIdRoute
   '/customers/edit/$customerId': typeof AuthCustomersEditCustomerIdRoute
+  '/reports/edit/$reportId': typeof AuthReportsEditReportIdRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginIndexRoute
   '/companies/create': typeof AuthCompaniesCreateRoute
   '/countries/create': typeof AuthCountriesCreateRoute
+  '/reports/create': typeof AuthReportsCreateRoute
   '/': typeof AuthDashboardIndexRoute
   '/companies': typeof AuthCompaniesIndexRoute
   '/countries': typeof AuthCountriesIndexRoute
   '/customers': typeof AuthCustomersIndexRoute
+  '/reports': typeof AuthReportsIndexRoute
   '/companies/edit/$companyId': typeof AuthCompaniesEditCompanyIdRoute
   '/countries/edit/$countryId': typeof AuthCountriesEditCountryIdRoute
   '/customers/details/$customerId': typeof AuthCustomersDetailsCustomerIdRoute
   '/customers/edit/$customerId': typeof AuthCustomersEditCustomerIdRoute
+  '/reports/edit/$reportId': typeof AuthReportsEditReportIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -118,14 +142,17 @@ export interface FileRoutesById {
   '/login/': typeof LoginIndexRoute
   '/_auth/companies/create': typeof AuthCompaniesCreateRoute
   '/_auth/countries/create': typeof AuthCountriesCreateRoute
+  '/_auth/reports/create': typeof AuthReportsCreateRoute
   '/_auth/_dashboard/': typeof AuthDashboardIndexRoute
   '/_auth/companies/': typeof AuthCompaniesIndexRoute
   '/_auth/countries/': typeof AuthCountriesIndexRoute
   '/_auth/customers/': typeof AuthCustomersIndexRoute
+  '/_auth/reports/': typeof AuthReportsIndexRoute
   '/_auth/companies/edit/$companyId': typeof AuthCompaniesEditCompanyIdRoute
   '/_auth/countries/edit/$countryId': typeof AuthCountriesEditCountryIdRoute
   '/_auth/customers/details/$customerId': typeof AuthCustomersDetailsCustomerIdRoute
   '/_auth/customers/edit/$customerId': typeof AuthCustomersEditCustomerIdRoute
+  '/_auth/reports/edit/$reportId': typeof AuthReportsEditReportIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -133,41 +160,50 @@ export interface FileRouteTypes {
     | '/login'
     | '/companies/create'
     | '/countries/create'
+    | '/reports/create'
     | '/'
     | '/companies'
     | '/countries'
     | '/customers'
+    | '/reports'
     | '/companies/edit/$companyId'
     | '/countries/edit/$countryId'
     | '/customers/details/$customerId'
     | '/customers/edit/$customerId'
+    | '/reports/edit/$reportId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/companies/create'
     | '/countries/create'
+    | '/reports/create'
     | '/'
     | '/companies'
     | '/countries'
     | '/customers'
+    | '/reports'
     | '/companies/edit/$companyId'
     | '/countries/edit/$countryId'
     | '/customers/details/$customerId'
     | '/customers/edit/$customerId'
+    | '/reports/edit/$reportId'
   id:
     | '__root__'
     | '/_auth'
     | '/login/'
     | '/_auth/companies/create'
     | '/_auth/countries/create'
+    | '/_auth/reports/create'
     | '/_auth/_dashboard/'
     | '/_auth/companies/'
     | '/_auth/countries/'
     | '/_auth/customers/'
+    | '/_auth/reports/'
     | '/_auth/companies/edit/$companyId'
     | '/_auth/countries/edit/$countryId'
     | '/_auth/customers/details/$customerId'
     | '/_auth/customers/edit/$customerId'
+    | '/_auth/reports/edit/$reportId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -190,6 +226,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof LoginIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_auth/reports/': {
+      id: '/_auth/reports/'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof AuthReportsIndexRouteImport
+      parentRoute: typeof AuthRouteRoute
     }
     '/_auth/customers/': {
       id: '/_auth/customers/'
@@ -219,6 +262,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthDashboardIndexRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/_auth/reports/create': {
+      id: '/_auth/reports/create'
+      path: '/reports/create'
+      fullPath: '/reports/create'
+      preLoaderRoute: typeof AuthReportsCreateRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
     '/_auth/countries/create': {
       id: '/_auth/countries/create'
       path: '/countries/create'
@@ -231,6 +281,13 @@ declare module '@tanstack/react-router' {
       path: '/companies/create'
       fullPath: '/companies/create'
       preLoaderRoute: typeof AuthCompaniesCreateRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/reports/edit/$reportId': {
+      id: '/_auth/reports/edit/$reportId'
+      path: '/reports/edit/$reportId'
+      fullPath: '/reports/edit/$reportId'
+      preLoaderRoute: typeof AuthReportsEditReportIdRouteImport
       parentRoute: typeof AuthRouteRoute
     }
     '/_auth/customers/edit/$customerId': {
@@ -267,27 +324,33 @@ declare module '@tanstack/react-router' {
 interface AuthRouteRouteChildren {
   AuthCompaniesCreateRoute: typeof AuthCompaniesCreateRoute
   AuthCountriesCreateRoute: typeof AuthCountriesCreateRoute
+  AuthReportsCreateRoute: typeof AuthReportsCreateRoute
   AuthDashboardIndexRoute: typeof AuthDashboardIndexRoute
   AuthCompaniesIndexRoute: typeof AuthCompaniesIndexRoute
   AuthCountriesIndexRoute: typeof AuthCountriesIndexRoute
   AuthCustomersIndexRoute: typeof AuthCustomersIndexRoute
+  AuthReportsIndexRoute: typeof AuthReportsIndexRoute
   AuthCompaniesEditCompanyIdRoute: typeof AuthCompaniesEditCompanyIdRoute
   AuthCountriesEditCountryIdRoute: typeof AuthCountriesEditCountryIdRoute
   AuthCustomersDetailsCustomerIdRoute: typeof AuthCustomersDetailsCustomerIdRoute
   AuthCustomersEditCustomerIdRoute: typeof AuthCustomersEditCustomerIdRoute
+  AuthReportsEditReportIdRoute: typeof AuthReportsEditReportIdRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthCompaniesCreateRoute: AuthCompaniesCreateRoute,
   AuthCountriesCreateRoute: AuthCountriesCreateRoute,
+  AuthReportsCreateRoute: AuthReportsCreateRoute,
   AuthDashboardIndexRoute: AuthDashboardIndexRoute,
   AuthCompaniesIndexRoute: AuthCompaniesIndexRoute,
   AuthCountriesIndexRoute: AuthCountriesIndexRoute,
   AuthCustomersIndexRoute: AuthCustomersIndexRoute,
+  AuthReportsIndexRoute: AuthReportsIndexRoute,
   AuthCompaniesEditCompanyIdRoute: AuthCompaniesEditCompanyIdRoute,
   AuthCountriesEditCountryIdRoute: AuthCountriesEditCountryIdRoute,
   AuthCustomersDetailsCustomerIdRoute: AuthCustomersDetailsCustomerIdRoute,
   AuthCustomersEditCustomerIdRoute: AuthCustomersEditCustomerIdRoute,
+  AuthReportsEditReportIdRoute: AuthReportsEditReportIdRoute,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(

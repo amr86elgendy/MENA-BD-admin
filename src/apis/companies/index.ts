@@ -25,6 +25,7 @@ export type CreateCompanyData = {
   website?: string
   description?: string
   services?: string[]
+  reportIds?: number[]
 }
 
 export type UpdateCompanyData = {
@@ -43,6 +44,7 @@ export type UpdateCompanyData = {
   website?: string
   description?: string
   services?: string[]
+  reportIds?: number[]
 }
 
 export type CompaniesResponse = {

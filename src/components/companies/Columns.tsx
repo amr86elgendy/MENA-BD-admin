@@ -36,7 +36,6 @@ export const columns: ColumnDef<TCompany>[] = [
       )
     },
     enableSorting: false,
-    enableHiding: false,
   },
   {
     accessorKey: 'industry',
@@ -49,7 +48,6 @@ export const columns: ColumnDef<TCompany>[] = [
       </span>
     ),
     enableSorting: false,
-    enableHiding: false,
   },
   {
     accessorKey: 'country',
@@ -59,6 +57,21 @@ export const columns: ColumnDef<TCompany>[] = [
     cell: ({ row }) => (
       <span className="text-sm text-gray-600">
         {row.original.country.nameEn}
+      </span>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: 'reports',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="reports" />
+    ),
+    cell: ({ row }) => (
+      <span className="text-sm text-gray-600">
+        {row.original.reports
+          ?.map((report, idx) => `${idx + 1}-` + report.name)
+          .join(', ')}
       </span>
     ),
     enableSorting: false,

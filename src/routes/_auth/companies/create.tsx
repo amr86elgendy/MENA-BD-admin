@@ -8,11 +8,13 @@ import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { CustomInput } from '@/components/controls/CustomInput'
 import { CustomSelect } from '@/components/controls/CustomSelect'
+import { CustomMultiSelect } from '@/components/controls/CustomMultiSelect'
 import { CustomTiptapInput } from '@/components/controls/CustomTiptapInput'
 // Utils
 import { useCreateCompany } from '@/apis/companies'
 import { companySchema } from '@/components/companies/schema'
 import { getAllCountriesQueryOptions } from '@/apis/countries'
+import { getAllReportsQueryOptions } from '@/apis/reports'
 
 type CompanySchemaType = z.infer<typeof companySchema>
 
@@ -22,6 +24,9 @@ export const Route = createFileRoute('/_auth/companies/create')({
       countriesQueryData: await queryClient.ensureQueryData(
         getAllCountriesQueryOptions(),
       ),
+      reportsQueryData: await queryClient.ensureQueryData(
+        getAllReportsQueryOptions({ isActive: true }),
+      ),
     }
   },
   component: CreateCompanyForm,
@@ -29,11 +34,12 @@ export const Route = createFileRoute('/_auth/companies/create')({
 
 function CreateCompanyForm() {
   const navigate = Route.useNavigate()
-  const { countriesQueryData } = Route.useLoaderData()
+  const { countriesQueryData, reportsQueryData } = Route.useLoaderData()
 
   const createCompany = useCreateCompany()
 
   const countries = countriesQueryData?.data?.filter((c) => c.isActive) || []
+  const reports = reportsQueryData?.data || []
 
   const form = useForm<CompanySchemaType>({
     defaultValues: {
@@ -52,6 +58,7 @@ function CreateCompanyForm() {
       website: '',
       description: '',
       services: [],
+      reportIds: [] as string[],
     },
     resolver: zodResolver(companySchema),
   })
@@ -69,11 +76,24 @@ function CreateCompanyForm() {
         values.services && values.services.length > 0
           ? values.services
           : undefined,
+      reportIds:
+        values.reportIds && values.reportIds.length > 0
+          ? values.reportIds.map((id) =>
+              typeof id === 'string' ? Number(id) : id,
+            )
+          : undefined,
     }
     createCompany.mutate(data, {
       onSuccess: () => navigate({ to: '/companies' }),
     })
   }
+
+  const reportOptions = reports.map((report) => ({
+    id: report.id,
+    name: report.name,
+    value: String(report.id),
+    label: `${report.name} (${report.country.nameEn}) - $${report.price}`,
+  }))
 
   return (
     <section className="m-auto space-y-8 md:w-3/4">
@@ -176,6 +196,16 @@ function CreateCompanyForm() {
             <CustomTiptapInput<CompanySchemaType>
               fieldTitle="description (optional)"
               nameInSchema="description"
+              className="col-span-2"
+            />
+
+            {/* Reports */}
+            <CustomMultiSelect<CompanySchemaType>
+              fieldTitle="Reports (optional)"
+              nameInSchema="reportIds"
+              options={reportOptions}
+              valueKey="id"
+              labelKey="label"
               className="col-span-2"
             />
           </div>

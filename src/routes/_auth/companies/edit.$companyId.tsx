@@ -9,26 +9,31 @@ import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { CustomInput } from '@/components/controls/CustomInput'
 import { CustomSelect } from '@/components/controls/CustomSelect'
+import { CustomMultiSelect } from '@/components/controls/CustomMultiSelect'
 import { CustomTiptapInput } from '@/components/controls/CustomTiptapInput'
 // Utils
 import { useUpdateCompany, getCompanyByIdQueryOptions } from '@/apis/companies'
 import { companySchema } from '@/components/companies/schema'
 import { getAllCountriesQueryOptions } from '@/apis/countries'
+import { getAllReportsQueryOptions } from '@/apis/reports'
 
 type CompanySchemaType = z.infer<typeof companySchema>
 
-export const Route = createFileRoute('/_auth/companies/edit/$companyId')(
-  {
-    loader: async ({ params, context: { queryClient } }) => {
-      const { companyId } = params
-      await Promise.all([
-        queryClient.ensureQueryData(getCompanyByIdQueryOptions(Number(companyId))),
-        queryClient.ensureQueryData(getAllCountriesQueryOptions()),
-      ])
-    },
-    component: EditCompanyForm,
+export const Route = createFileRoute('/_auth/companies/edit/$companyId')({
+  loader: async ({ params, context: { queryClient } }) => {
+    const { companyId } = params
+    await Promise.all([
+      queryClient.ensureQueryData(
+        getCompanyByIdQueryOptions(Number(companyId)),
+      ),
+      queryClient.ensureQueryData(getAllCountriesQueryOptions()),
+      queryClient.ensureQueryData(
+        getAllReportsQueryOptions({ isActive: true }),
+      ),
+    ])
   },
-)
+  component: EditCompanyForm,
+})
 
 function EditCompanyForm() {
   const { companyId } = Route.useParams()
@@ -49,6 +54,12 @@ function EditCompanyForm() {
   )
   const countries = countriesData?.data?.filter((c) => c.isActive) || []
 
+  // Get pre-fetched reports from loader
+  const { data: reportsData } = useSuspenseQuery(
+    getAllReportsQueryOptions({ isActive: true }),
+  )
+  const reports = reportsData?.data || []
+
   const form = useForm<CompanySchemaType>({
     defaultValues: {
       nameEn: company.nameEn,
@@ -66,6 +77,7 @@ function EditCompanyForm() {
       website: company.website || '',
       description: company.description || '',
       services: company.services || [],
+      reportIds: (company.reports?.map((r) => String(r.id)) || []) as string[],
     },
     resolver: zodResolver(companySchema),
   })
@@ -79,7 +91,16 @@ function EditCompanyForm() {
       foundedDate: values.foundedDate || undefined,
       size: values.size || undefined,
       description: values.description || undefined,
-      services: values.services && values.services.length > 0 ? values.services : undefined,
+      services:
+        values.services && values.services.length > 0
+          ? values.services
+          : undefined,
+      reportIds:
+        values.reportIds && values.reportIds.length > 0
+          ? values.reportIds.map((id) =>
+              typeof id === 'string' ? Number(id) : id,
+            )
+          : undefined,
     }
     updateCompany.mutate(
       {
@@ -91,6 +112,13 @@ function EditCompanyForm() {
       },
     )
   }
+
+  const reportOptions = reports.map((report) => ({
+    id: report.id,
+    name: report.name,
+    value: String(report.id),
+    label: `${report.name} (${report.country.nameEn}) - $${report.price}`,
+  }))
 
   return (
     <section className="m-auto space-y-8 md:w-3/4">
@@ -118,7 +146,7 @@ function EditCompanyForm() {
               nameInSchema="nameAr"
               optional
             />
-            
+
             {/* Registration & Legal Form */}
             <CustomInput<CompanySchemaType>
               fieldTitle="registration number"
@@ -129,7 +157,7 @@ function EditCompanyForm() {
               nameInSchema="legalForm"
               optional
             />
-            
+
             {/* Industry & Founded Date */}
             <CustomInput<CompanySchemaType>
               fieldTitle="industry"
@@ -141,7 +169,7 @@ function EditCompanyForm() {
               type="date"
               optional
             />
-            
+
             {/* Size & Country */}
             <CustomInput<CompanySchemaType>
               fieldTitle="size"
@@ -156,7 +184,7 @@ function EditCompanyForm() {
               labelKey="nameEn"
               placeholder="Select a country..."
             />
-            
+
             {/* Address & City */}
             <CustomInput<CompanySchemaType>
               fieldTitle="address"
@@ -167,7 +195,7 @@ function EditCompanyForm() {
               fieldTitle="city"
               nameInSchema="city"
             />
-            
+
             {/* Phone & Email */}
             <CustomInput<CompanySchemaType>
               fieldTitle="phone"
@@ -179,7 +207,7 @@ function EditCompanyForm() {
               nameInSchema="email"
               type="email"
             />
-            
+
             {/* Website */}
             <CustomInput<CompanySchemaType>
               fieldTitle="website"
@@ -188,11 +216,21 @@ function EditCompanyForm() {
               optional
               className="col-span-2"
             />
-            
+
             {/* Description */}
             <CustomTiptapInput<CompanySchemaType>
               fieldTitle="description (optional)"
               nameInSchema="description"
+              className="col-span-2"
+            />
+
+            {/* Reports */}
+            <CustomMultiSelect<CompanySchemaType>
+              fieldTitle="Reports (optional)"
+              nameInSchema="reportIds"
+              options={reportOptions}
+              valueKey="id"
+              labelKey="label"
               className="col-span-2"
             />
           </div>

@@ -25,4 +25,5 @@ export const companySchema = z.object({
     .or(z.literal('')),
   description: z.string().optional(),
   services: z.array(z.string()).optional(),
+  reportIds: z.array(z.union([z.string(), z.number()])).optional(),
 })

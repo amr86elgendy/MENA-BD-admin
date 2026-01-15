@@ -26,7 +26,7 @@ export type UpdateUserData = {
 // ####################### Get All Users #######################
 export const getAllUsers = async (): Promise<TUser[]> => {
   const { data } = await clientApi({
-    url: 'users',
+    url: 'admin/users',
     method: 'GET',
   })
   return Array.isArray(data) ? data : data.data || []
@@ -41,7 +41,7 @@ export const getAllUsersQueryOptions = () =>
 // ####################### Get User By ID #######################
 export const getUserById = async (id: number): Promise<TUser> => {
   const { data } = await clientApi({
-    url: `users/${id}`,
+    url: `admin/users/${id}`,
     method: 'GET',
   })
   return (data as any).data || data
@@ -56,7 +56,7 @@ export const getUserByIdQueryOptions = (id: number) =>
 // ####################### Create User #######################
 const createUser = async (data: CreateUserData): Promise<TUser> => {
   const { data: response } = await clientApi({
-    url: 'users',
+    url: 'admin/users',
     method: 'POST',
     data,
   })
@@ -82,7 +82,7 @@ const updateUser = async ({
   data: UpdateUserData
 }): Promise<TUser> => {
   const { data: response } = await clientApi({
-    url: `users/${id}`,
+    url: `admin/users/${id}`,
     method: 'PUT',
     data,
   })
@@ -103,7 +103,7 @@ export function useUpdateUser() {
 // ####################### Delete User #######################
 const deleteUser = async (id: number): Promise<void> => {
   await clientApi({
-    url: `users/${id}`,
+    url: `admin/users/${id}`,
     method: 'DELETE',
   })
 }
@@ -125,7 +125,7 @@ const updateUserPassword = async ({
   data: { oldPassword: string; newPassword: string }
 }) => {
   const { data } = await clientApi({
-    url: 'users/updateUserPassword',
+    url: 'admin/users/updateUserPassword',
     method: 'PATCH',
     data: userData,
   })

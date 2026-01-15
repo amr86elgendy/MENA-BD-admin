@@ -19,8 +19,13 @@ type NestedKeyOf<T> = T extends object
   : never
 
 type Option = {
-  _id: string
-  name_en: string
+  _id?: string
+  id?: string | number
+  name_en?: string
+  name?: string
+  label?: string
+  value?: string | number
+  [key: string]: any
 }
 
 type Props<S> = {
@@ -28,6 +33,9 @@ type Props<S> = {
   nameInSchema: NestedKeyOf<S>
   options?: Option[]
   className?: string
+  valueKey?: string
+  labelKey?: string
+  maxCount?: number
 }
 
 export function CustomMultiSelect<S>({
@@ -35,8 +43,28 @@ export function CustomMultiSelect<S>({
   nameInSchema,
   options,
   className,
+  valueKey,
+  labelKey,
+  maxCount,
 }: Props<S>) {
   const form = useFormContext()
+
+  // Determine value and label keys with fallbacks
+  const getValue = (item: Option): string => {
+    if (valueKey) return String(item[valueKey] ?? '')
+    if (item.value !== undefined) return String(item.value)
+    if (item.id !== undefined) return String(item.id)
+    if (item._id) return String(item._id)
+    return ''
+  }
+
+  const getLabel = (item: Option): string => {
+    if (labelKey) return String(item[labelKey] ?? '')
+    if (item.label) return item.label
+    if (item.name) return item.name
+    if (item.name_en) return item.name_en
+    return ''
+  }
 
   return (
     <FormField
@@ -49,15 +77,15 @@ export function CustomMultiSelect<S>({
           </FormLabel>
           <MultiSelect
             options={
-              options?.map((c) => ({
-                label: c.name_en,
-                value: c._id,
+              options?.map((item) => ({
+                label: getLabel(item),
+                value: getValue(item),
               })) ?? []
             }
             onValueChange={field.onChange}
             defaultValue={field.value}
             variant="inverted"
-            maxCount={3}
+            maxCount={maxCount}
             className={className}
           />
           <FormMessage />

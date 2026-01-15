@@ -33,7 +33,7 @@ const getCustomers = async ({
   if (rest.role) params.role = rest.role
 
   const { data } = await clientApi({
-    url: 'users',
+    url: 'admin/users',
     method: 'GET',
     params,
   })
@@ -65,7 +65,7 @@ export function getCustomersQueryOptions(props?: any) {
 // ####################### View User #######################
 export const getUserById = async (id: number): Promise<TUser> => {
   const { data } = await clientApi({
-    url: `users/${id}`,
+    url: `admin/users/${id}`,
     method: 'GET',
   })
   return data
@@ -95,7 +95,7 @@ const updateUser = async ({
   id: string | undefined
 }) => {
   const { data } = await clientApi({
-    url: `users/${id}`,
+    url: `admin/users/${id}`,
     method: 'PUT',
     data: userData,
   })
@@ -127,7 +127,7 @@ const blockUser = async ({
   id: string | undefined
 }) => {
   const { data } = await clientApi({
-    url: 'users/block',
+    url: 'admin/users/block',
     method: 'PATCH',
     data: { id, blocked },
   })
@@ -148,7 +148,7 @@ export function useBlockUser() {
 // ####################### Verify User #######################
 const verifyUser = async (id: number): Promise<TUser> => {
   const { data } = await clientApi({
-    url: `users/${id}/verify`,
+    url: `admin/users/${id}/verify`,
     method: 'PUT',
   })
   return data.user

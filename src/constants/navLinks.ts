@@ -3,6 +3,7 @@ import {
   GlobeIcon,
   HomeIcon,
   UsersIcon,
+  FileTextIcon,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -47,5 +48,10 @@ export const links: TSidebarLink[] = [
     title: 'customers',
     url: '/customers',
     icon: UsersIcon,
+  },
+  {
+    title: 'Reports',
+    url: '/reports',
+    icon: FileTextIcon,
   },
 ]
